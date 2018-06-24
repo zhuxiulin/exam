@@ -352,9 +352,14 @@
             var str = '';
             var count = {'choice':1,'judge':1,'filla':1,'fillb':1,'coding':1};
             var type = {'choice':'选择题','judge':'判断题','filla':'填空题','fillb':'程序填空题','coding':'编程题'};
-            for (var j = 1; j <= data.body.data[0][2].length; j++) {
-                str = `<th hidden>` + type[data.body.data[0][2][j-1].eq_qt_type] + ``+count[data.body.data[0][2][j-1].eq_qt_type]++ + `</th>`
-                $("#score_tr").append(str);
+            for(var k =0;k<data.body.data[0].length;k++){
+                if(data.body.data[k][2].length<=0)
+                    continue;
+                for (var j = 1; j <= data.body.data[k][2].length; j++) {
+                    str = `<th >` + type[data.body.data[k][2][j-1].eq_qt_type] + ``+count[data.body.data[k][2][j-1].eq_qt_type]++ + `</th>`
+                    $("#score_tr").append(str);
+                }
+                break;
             }
             var i = 0;
             var str = '';
@@ -368,7 +373,7 @@
                                     </tr>`
                 tablebody.append(str);
                 for (var k = 0; k < data.body.data[i][2].length; k++) {
-                    str = `<td hidden>` + data.body.data[i][2][k].eq_get_score + `</td>`
+                    str = `<td >` + data.body.data[i][2][k].eq_get_score + `</td>`
                     $("#" + data.body.data[i][0].st_id + "").append(str);
                 }
                 i++;
