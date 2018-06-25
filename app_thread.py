@@ -146,7 +146,7 @@ def CreatQuestionSource(delay):
                         with open('%s/%s/%s.out' % (question_source, Fillb.question_qt_id, k), 'w') as f:
                             f.write("%s" % test_out[k])
         except BaseException as e:
-            print e
+            print(e)
             # with open('/home/exam/log.txt', 'a+') as f:
             #     f.write(e)
 # thread.start_new(upExamStatusStart, ("thread-1", 1,))
