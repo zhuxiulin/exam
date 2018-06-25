@@ -298,6 +298,7 @@
                     data: formData,
                     dataType: "json",
                     success: function(data) {
+                        console.log(data);
                         if (data == 1 || data.success == 1) {
                             pekeUpload.files[pos] = null;
                             $('div.row[rel="' + pos + '"]').find(".pkuppbr").css("width", "100%");

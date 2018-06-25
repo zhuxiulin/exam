@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
-import os
+import os, sys
 
 reload(sys)
 sys.path.append('../')
 sys.setdefaultencoding( "utf-8" )
+
 import web
 from model.model import *
 from util import Status, Response
@@ -160,6 +160,8 @@ class BatchAddStudent(object):#首先存放excel文件
         if 'myfile' in x: 
                 filepath=x.myfile.filename.replace('\\','/')
                 filename = unicode(filepath.split('/')[-1],'utf-8')
+                # import time
+                # filename = int(time.time())
                 file_suffix = filename.split('.')[-1]
                 file_truth = 0   
                 for i in range(len(file_range)):
@@ -168,15 +170,19 @@ class BatchAddStudent(object):#首先存放excel文件
                 if file_truth == 1: 
                     origin_site = os.getcwdu()
                     try:
-                        # print(origin_site +'/'+"%s"% filename,'wb+')
-                        with open(origin_site +'/'+"%s"% filename,'wb+') as fout:# creates the file where the uploaded file should be stored
-                            print('opened')
+                        # try:
+                        #     str = x.myfile.file.read()
+                        #     str = str.decode('ascii')
+                        #
+                        #     util.getFileRotatingLog().debug(str)
+                        #     util.getFileRotatingLog().debug(type(str))
+                        # except BaseException as e:
+                        #     util.getFileRotatingLog().debug(e)
+                        with open(origin_site +'/'+ filename,'wb+') as fout:# creates the file where the uploaded file should be stored
                             fout.write(x.myfile.file.read()) # writes the uploaded file to the newly created file.
-                            print('writed')
-                            # fout.close() # closes the file, upload complete.
-                            # print('closed')
                             file_site = origin_site +'/'+filename
-                    except IOError as err :
+                    except BaseException as e:
+                        util.getFileRotatingLog().debug(e)
                         os.chdir(current_site)
                         return util.objtojson({"error":"文件上传失败!"})
                        
@@ -187,24 +193,28 @@ class BatchAddStudent(object):#首先存放excel文件
                         params = dict.fromkeys(Student_model.__attr__)
                         for i in range(5,nrows-1):#行数
                             if i>0:
-                                params['st_id']=int(table.row_values(i)[1])
-                                params['st_name'] = table.row_values(i)[2]
-                                params['st_sex'] = table.row_values(i)[3]
-                                params['st_specialty'] = table.row_values(i)[4]
-                                params['st_phone'] = table.row_values(i)[5]
-                                params['st_picture'] = table.row_values(i)[6]
-                                params = Student_model(**params)
-                                try: 
-                                    params.insert() 
+                                try:
+                                    params['st_id']= int(table.row_values(i)[1])
+                                    params['st_name'] = table.row_values(i)[2]
+                                    params['st_sex'] = table.row_values(i)[3]
+                                    params['st_specialty'] = table.row_values(i)[4]
+                                    params['st_phone'] = table.row_values(i)[5]
+                                    params['st_picture'] = table.row_values(i)[6]
+                                    params = Student_model(**params)
+                                except Exception as e:
+                                    continue
+                                try:
+                                    params.insert()
                                     db.insert("student_has_class",student_st_id = params['st_id'],class_cl_id = x.cl_id)
                                 except Exception as e:
-                                    db.insert("student_has_class",student_st_id = params['st_id'],class_cl_id = x.cl_id)
+                                    util.getFileRotatingLog().debug(e)
                         os.chdir(current_site)
                         return 1
-                    except:
-                       r = {"success":0,"error":"导入数据库失败"}
-                       os.chdir(current_site)
-                       return util.objtojson(r)
+                    except BaseException as e:
+                        util.getFileRotatingLog().debug(e)
+                        r = {"success":0,"error":"导入数据库失败"}
+                        os.chdir(current_site)
+                        return util.objtojson(r)
                 else:
                     os.chdir(current_site)
                     return 0
