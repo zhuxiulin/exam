@@ -3,6 +3,9 @@
 import os, sys
 
 abspath = os.path.dirname(__file__)
+sys.path.append(abspath)
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 from model import model
 import util
@@ -143,8 +146,9 @@ def CreatQuestionSource(delay):
                         with open('%s/%s/%s.out' % (question_source, Fillb.question_qt_id, k), 'w') as f:
                             f.write("%s" % test_out[k])
         except BaseException as e:
-            with open('/home/exam/log.txt', 'a+') as f:
-                f.write(e)
+            print e
+            # with open('/home/exam/log.txt', 'a+') as f:
+            #     f.write(e)
 # thread.start_new(upExamStatusStart, ("thread-1", 1,))
 # thread.start_new(upExamStatusStop, ("thread-2", 1,))
 # thread.start_new(upInformationState, ("thread-3", 1,))
